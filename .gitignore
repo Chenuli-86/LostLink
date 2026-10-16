@@ -361,3 +361,21 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+
+# ============================================================
+# LostLink - Project-specific ignored files
+# ============================================================
+
+# SQLite databases and temporary database files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Uploaded lost-and-found item photographs
+ItemImages/
+
+# Local backup databases
+*.db.bak

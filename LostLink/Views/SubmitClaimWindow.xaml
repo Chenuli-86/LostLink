@@ -1,0 +1,155 @@
+﻿<Window x:Class="LostLink.Views.SubmitClaimWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="LostLink - Submit Claim"
+        Width="620"
+        Height="690"
+        MinWidth="520"
+        MinHeight="600"
+        WindowStartupLocation="CenterOwner"
+        Background="#EFFAF8"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <Style x:Key="FieldStyle" TargetType="TextBox">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#B9DDD9"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style x:Key="FormLabelStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#102C35"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,7"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="105"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#087C78">
+            <StackPanel Margin="28,19">
+                <TextBlock Text="Submit Ownership Claim"
+                           Foreground="White"
+                           FontFamily="Georgia"
+                           FontSize="27"
+                           FontWeight="Bold"/>
+                <TextBlock Text="Record a student's claim for a found item"
+                           Foreground="#D7F2EF"
+                           FontSize="13"
+                           Margin="0,7,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="28,24,28,28">
+
+                <Border Background="#D7F2EF"
+                        BorderBrush="#B9DDD9"
+                        BorderThickness="1"
+                        CornerRadius="12"
+                        Padding="15"
+                        Margin="0,0,0,22">
+                    <StackPanel>
+                        <TextBlock Text="SELECTED FOUND ITEM"
+                                   Foreground="#087C78"
+                                   FontWeight="Bold"
+                                   FontSize="11"/>
+                        <TextBlock x:Name="ItemTitleTextBlock"
+                                   FontSize="19"
+                                   FontWeight="Bold"
+                                   Foreground="#102C35"
+                                   TextWrapping="Wrap"
+                                   Margin="0,7,0,0"/>
+                        <TextBlock x:Name="ItemDetailsTextBlock"
+                                   FontSize="12"
+                                   Foreground="#54717A"
+                                   TextWrapping="Wrap"
+                                   Margin="0,6,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="Student's full name *"
+                           Style="{StaticResource FormLabelStyle}"/>
+
+                <TextBox x:Name="ClaimantNameTextBox"
+                         Style="{StaticResource FieldStyle}"
+                         MaxLength="150"
+                         Margin="0,0,0,19"/>
+
+                <TextBlock Text="Linked lost report (optional)"
+                           Style="{StaticResource FormLabelStyle}"/>
+
+                <ComboBox x:Name="LostReportComboBox"
+                          Height="43"
+                          FontSize="13"
+                          Background="White"
+                          BorderBrush="#B9DDD9"
+                          DisplayMemberPath="DisplayText"
+                          SelectedValuePath="ItemId"
+                          Margin="0,0,0,7"/>
+
+                <TextBlock Text="Select a lost report only when staff have verified that it relates to this student."
+                           Foreground="#668486"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,19"/>
+
+                <TextBlock Text="Ownership verification details *"
+                           Style="{StaticResource FormLabelStyle}"/>
+
+                <TextBox x:Name="VerificationNotesTextBox"
+                         Style="{StaticResource FieldStyle}"
+                         Height="125"
+                         MaxLength="3000"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         VerticalContentAlignment="Top"
+                         Margin="0,0,0,10"/>
+
+                <TextBlock Text="Record details that help establish ownership. Avoid unnecessary sensitive personal information."
+                           Foreground="#668486"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,24"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0"
+                            Content="Cancel"
+                            Height="46"
+                            Background="White"
+                            Foreground="#087C78"
+                            BorderBrush="#B9DDD9"
+                            FontWeight="SemiBold"
+                            Cursor="Hand"
+                            Click="CancelButton_Click"/>
+
+                    <Button x:Name="SubmitButton"
+                            Grid.Column="2"
+                            Content="Submit Claim"
+                            Height="46"
+                            Background="#19AAA3"
+                            Foreground="White"
+                            BorderThickness="0"
+                            FontWeight="SemiBold"
+                            Cursor="Hand"
+                            Click="SubmitButton_Click"/>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

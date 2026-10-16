@@ -1,12 +1,1656 @@
 ﻿<Window x:Class="LostLink.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LostLink"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="LostLink - Campus Management"
+        Width="1500"
+        Height="900"
+        MinWidth="1100"
+        MinHeight="700"
+        WindowStartupLocation="CenterScreen"
+        Background="#EFFAF8"
+        FontFamily="Segoe UI">
 
+    <Window.Resources>
+        <local:OptionalImageConverter x:Key="OptionalImageConverter"/>
+
+        <!-- SIDEBAR BUTTONS -->
+        <Style x:Key="NavButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="55"/>
+            <Setter Property="Margin" Value="14,4"/>
+            <Setter Property="Padding" Value="20,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Left"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="NavBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="14">
+                            <ContentPresenter
+                                Margin="{TemplateBinding Padding}"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Left"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="NavBorder"
+                                        Property="Background"
+                                        Value="#239A94"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ACTION BUTTONS -->
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Padding" Value="20,0"/>
+            <Setter Property="Background" Value="#19AAA3"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="12">
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- DASHBOARD CARDS -->
+        <Style x:Key="SummaryCardStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="18"/>
+            <Setter Property="Padding" Value="22"/>
+            <Setter Property="Margin" Value="0,0,14,0"/>
+            <Setter Property="BorderBrush" Value="#B9DDD9"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <!-- PHOTO TEMPLATE -->
+        <DataTemplate x:Key="ItemPhotoTemplate">
+            <Border Width="125"
+                    Height="115"
+                    CornerRadius="12"
+                    Background="#EFF8F7"
+                    BorderBrush="#B9DDD9"
+                    BorderThickness="1"
+                    ClipToBounds="True">
+                <Grid>
+                    <StackPanel HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                        <TextBlock Text="📷"
+                                   FontSize="25"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="No photo"
+                                   FontSize="11"
+                                   Foreground="#668486"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,5,0,0"/>
+                    </StackPanel>
+
+                    <Image Source="{Binding ImagePath, Converter={StaticResource OptionalImageConverter}, Mode=OneWay}"
+                           Stretch="UniformToFill">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Setter Property="Visibility"
+                                        Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ImagePath}"
+                                                 Value="{x:Null}">
+                                        <Setter Property="Visibility"
+                                                Value="Collapsed"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding ImagePath}"
+                                                 Value="">
+                                        <Setter Property="Visibility"
+                                                Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- LOST ITEM CARD -->
+        <DataTemplate x:Key="LostItemCardTemplate">
+            <Border Background="White"
+                    BorderBrush="#C5E4E0"
+                    BorderThickness="1"
+                    CornerRadius="15"
+                    Padding="20"
+                    Margin="0,0,0,12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="125"/>
+                        <ColumnDefinition Width="18"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ContentControl Grid.Column="0"
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource ItemPhotoTemplate}"
+                                    VerticalAlignment="Top"/>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="{Binding Title}"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="#102C35"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock Margin="0,8,0,0"
+                                   Foreground="#54717A"
+                                   FontSize="13">
+                            <Run Text="Category: "/>
+                            <Run Text="{Binding Category}"/>
+                        </TextBlock>
+
+                        <TextBlock Margin="0,5,0,0"
+                                   Foreground="#54717A"
+                                   FontSize="13"
+                                   TextWrapping="Wrap">
+                            <Run Text="Colour: "/>
+                            <Run Text="{Binding Colour}"/>
+                            <Run Text="   |   Location: "/>
+                            <Run Text="{Binding Location}"/>
+                        </TextBlock>
+
+                        <TextBlock Margin="0,5,0,0"
+                                   Foreground="#54717A"
+                                   FontSize="12">
+                            <Run Text="Last seen: "/>
+                            <Run Text="{Binding IncidentDate, StringFormat={}{0:dd MMM yyyy}}"/>
+                        </TextBlock>
+
+                        <TextBlock Text="{Binding Description}"
+                                   Margin="0,10,0,0"
+                                   Foreground="#34545C"
+                                   FontSize="13"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock Margin="0,10,0,0"
+                                   Foreground="#7B9398"
+                                   FontSize="11">
+                            <Run Text="Report #"/>
+                            <Run Text="{Binding ItemId}"/>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <Border Grid.Column="3"
+                            Background="#FFF0E6"
+                            CornerRadius="14"
+                            Padding="14,7"
+                            VerticalAlignment="Top"
+                            Margin="20,0,0,0">
+                        <TextBlock Text="{Binding Status}"
+                                   Foreground="#B45A20"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"/>
+                    </Border>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- FOUND ITEM CARD WITH CLAIM BUTTON -->
+        <DataTemplate x:Key="FoundItemCardTemplate">
+            <Border Background="White"
+                    BorderBrush="#C5E4E0"
+                    BorderThickness="1"
+                    CornerRadius="15"
+                    Padding="20"
+                    Margin="0,0,0,12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="125"/>
+                        <ColumnDefinition Width="18"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ContentControl Grid.Column="0"
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource ItemPhotoTemplate}"
+                                    VerticalAlignment="Top"/>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="{Binding Title}"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="#102C35"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock Margin="0,8,0,0"
+                                   Foreground="#54717A"
+                                   FontSize="13">
+                            <Run Text="Category: "/>
+                            <Run Text="{Binding Category}"/>
+                        </TextBlock>
+
+                        <TextBlock Margin="0,5,0,0"
+                                   Foreground="#54717A"
+                                   FontSize="13"
+                                   TextWrapping="Wrap">
+                            <Run Text="Colour: "/>
+                            <Run Text="{Binding Colour}"/>
+                            <Run Text="   |   Location: "/>
+                            <Run Text="{Binding Location}"/>
+                        </TextBlock>
+
+                        <TextBlock Margin="0,5,0,0"
+                                   Foreground="#54717A"
+                                   FontSize="12">
+                            <Run Text="Date found: "/>
+                            <Run Text="{Binding IncidentDate, StringFormat={}{0:dd MMM yyyy}}"/>
+                        </TextBlock>
+
+                        <TextBlock Text="{Binding Description}"
+                                   Margin="0,10,0,0"
+                                   Foreground="#34545C"
+                                   FontSize="13"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock Margin="0,10,0,0"
+                                   Foreground="#7B9398"
+                                   FontSize="11">
+                            <Run Text="Report #"/>
+                            <Run Text="{Binding ItemId}"/>
+                        </TextBlock>
+
+                        <Button Content="✓  Submit Claim"
+                                Tag="{Binding}"
+                                Width="150"
+                                Height="38"
+                                HorizontalAlignment="Left"
+                                Margin="0,14,0,0"
+                                Background="#19AAA3"
+                                Foreground="White"
+                                BorderThickness="0"
+                                FontWeight="SemiBold"
+                                Cursor="Hand"
+                                Click="SubmitClaimButton_Click">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Visibility"
+                                            Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Status}"
+                                                     Value="Open">
+                                            <Setter Property="Visibility"
+                                                    Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+
+                    <Border Grid.Column="3"
+                            Background="#D7F2EF"
+                            CornerRadius="14"
+                            Padding="14,7"
+                            VerticalAlignment="Top"
+                            Margin="20,0,0,0">
+                        <TextBlock Text="{Binding Status}"
+                                   Foreground="#087C78"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"/>
+                    </Border>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- RECENT REPORT CARD -->
+        <DataTemplate x:Key="RecentItemCardTemplate">
+            <Border Background="White"
+                    BorderBrush="#C5E4E0"
+                    BorderThickness="1"
+                    CornerRadius="15"
+                    Padding="15"
+                    Margin="0,0,0,12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="125"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ContentControl Grid.Column="0"
+                                    Content="{Binding}"
+                                    ContentTemplate="{StaticResource ItemPhotoTemplate}"
+                                    VerticalAlignment="Top"/>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="{Binding Title}"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="#102C35"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock Text="{Binding Type}"
+                                   Foreground="#087C78"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Margin="0,5,0,0"/>
+
+                        <TextBlock Margin="0,8,0,0"
+                                   Foreground="#54717A"
+                                   FontSize="12"
+                                   TextWrapping="Wrap">
+                            <Run Text="{Binding Category}"/>
+                            <Run Text="   |   "/>
+                            <Run Text="{Binding Location}"/>
+                        </TextBlock>
+
+                        <TextBlock Text="{Binding Description}"
+                                   Margin="0,8,0,0"
+                                   Foreground="#34545C"
+                                   FontSize="12"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock Margin="0,9,0,0"
+                                   Foreground="#7B9398"
+                                   FontSize="11">
+                            <Run Text="Report #"/>
+                            <Run Text="{Binding ItemId}"/>
+                            <Run Text="   |   "/>
+                            <Run Text="{Binding Status}"/>
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- SMART MATCH CARD -->
+        <DataTemplate x:Key="SmartMatchCardTemplate">
+            <Border Background="White"
+                    BorderBrush="#B9DDD9"
+                    BorderThickness="1"
+                    CornerRadius="18"
+                    Padding="22"
+                    Margin="0,0,0,16">
+
+                <StackPanel>
+
+                    <!-- MATCH HEADER -->
+                    <Grid Margin="0,0,0,18">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <TextBlock Text="Potential Item Match"
+                                       FontSize="19"
+                                       FontWeight="Bold"
+                                       Foreground="#102C35"/>
+
+                            <TextBlock Margin="0,6,0,0"
+                                       Foreground="#54717A"
+                                       FontSize="12">
+                                <Run Text="Lost report #"/>
+                                <Run Text="{Binding LostItemId}"/>
+                                <Run Text="   ↔   Found report #"/>
+                                <Run Text="{Binding FoundItemId}"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <Border Grid.Column="1"
+                                Background="#D7F2EF"
+                                CornerRadius="13"
+                                Padding="17,10"
+                                Margin="15,0,0,0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding MatchScore, StringFormat={}{0:F2}%}"
+                                           FontSize="24"
+                                           FontWeight="Bold"
+                                           Foreground="#087C78"
+                                           HorizontalAlignment="Center"/>
+
+                                <TextBlock Text="{Binding Classification}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           Foreground="#087C78"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- MATCHED ITEMS -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="14"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- LOST SIDE -->
+                        <Border Grid.Column="0"
+                                Background="#FFF0E6"
+                                CornerRadius="12"
+                                Padding="15">
+                            <StackPanel>
+                                <TextBlock Text="LOST ITEM"
+                                           Foreground="#B45A20"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+
+                                <Border Height="155"
+                                        Background="White"
+                                        CornerRadius="10"
+                                        Margin="0,10,0,4"
+                                        ClipToBounds="True">
+                                    <Grid>
+                                        <StackPanel HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
+                                            <TextBlock Text="📷"
+                                                       FontSize="25"
+                                                       HorizontalAlignment="Center"/>
+                                            <TextBlock Text="No lost-item photo"
+                                                       Foreground="#7B9398"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center"/>
+                                        </StackPanel>
+
+                                        <Image Source="{Binding LostImagePath, Converter={StaticResource OptionalImageConverter}, Mode=OneWay}"
+                                               Stretch="Uniform">
+                                            <Image.Style>
+                                                <Style TargetType="Image">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding LostImagePath}"
+                                                                     Value="{x:Null}">
+                                                            <Setter Property="Visibility"
+                                                                    Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding LostImagePath}"
+                                                                     Value="">
+                                                            <Setter Property="Visibility"
+                                                                    Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
+                                    </Grid>
+                                </Border>
+
+                                <TextBlock Text="{Binding LostTitle}"
+                                           Foreground="#102C35"
+                                           FontSize="17"
+                                           FontWeight="Bold"
+                                           TextWrapping="Wrap"
+                                           Margin="0,8,0,0"/>
+
+                                <TextBlock Text="{Binding LostLocation}"
+                                           Foreground="#54717A"
+                                           FontSize="12"
+                                           TextWrapping="Wrap"
+                                           Margin="0,7,0,0"/>
+
+                                <TextBlock Text="{Binding LostDate, StringFormat={}{0:dd MMM yyyy}}"
+                                           Foreground="#54717A"
+                                           FontSize="12"
+                                           Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- FOUND SIDE -->
+                        <Border Grid.Column="2"
+                                Background="#D7F2EF"
+                                CornerRadius="12"
+                                Padding="15">
+                            <StackPanel>
+                                <TextBlock Text="FOUND ITEM"
+                                           Foreground="#087C78"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+
+                                <Border Height="155"
+                                        Background="White"
+                                        CornerRadius="10"
+                                        Margin="0,10,0,4"
+                                        ClipToBounds="True">
+                                    <Grid>
+                                        <StackPanel HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
+                                            <TextBlock Text="📷"
+                                                       FontSize="25"
+                                                       HorizontalAlignment="Center"/>
+                                            <TextBlock Text="No found-item photo"
+                                                       Foreground="#7B9398"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center"/>
+                                        </StackPanel>
+
+                                        <Image Source="{Binding FoundImagePath, Converter={StaticResource OptionalImageConverter}, Mode=OneWay}"
+                                               Stretch="Uniform">
+                                            <Image.Style>
+                                                <Style TargetType="Image">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding FoundImagePath}"
+                                                                     Value="{x:Null}">
+                                                            <Setter Property="Visibility"
+                                                                    Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding FoundImagePath}"
+                                                                     Value="">
+                                                            <Setter Property="Visibility"
+                                                                    Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
+                                    </Grid>
+                                </Border>
+
+                                <TextBlock Text="{Binding FoundTitle}"
+                                           Foreground="#102C35"
+                                           FontSize="17"
+                                           FontWeight="Bold"
+                                           TextWrapping="Wrap"
+                                           Margin="0,8,0,0"/>
+
+                                <TextBlock Text="{Binding FoundLocation}"
+                                           Foreground="#54717A"
+                                           FontSize="12"
+                                           TextWrapping="Wrap"
+                                           Margin="0,7,0,0"/>
+
+                                <TextBlock Text="{Binding FoundDate, StringFormat={}{0:dd MMM yyyy}}"
+                                           Foreground="#54717A"
+                                           FontSize="12"
+                                           Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- MATCH BREAKDOWN -->
+                    <TextBlock Text="Matching Breakdown"
+                               FontSize="15"
+                               FontWeight="SemiBold"
+                               Foreground="#102C35"
+                               Margin="0,0,0,12"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Foreground="#54717A"
+                                       FontSize="12"
+                                       Margin="0,0,0,7">
+                                <Run Text="Category: "/>
+                                <Run Text="{Binding CategoryMatchText, Mode=OneWay}"/>
+                            </TextBlock>
+
+                            <TextBlock Foreground="#54717A"
+                                       FontSize="12"
+                                       Margin="0,0,0,7">
+                                <Run Text="Colour: "/>
+                                <Run Text="{Binding ColourMatchText, Mode=OneWay}"/>
+                            </TextBlock>
+
+                            <TextBlock Foreground="#54717A"
+                                       FontSize="12">
+                                <Run Text="Location: "/>
+                                <Run Text="{Binding LocationMatchText, Mode=OneWay}"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Foreground="#54717A"
+                                       FontSize="12"
+                                       Margin="0,0,0,7">
+                                <Run Text="Date similarity: "/>
+                                <Run Text="{Binding DateScore, StringFormat={}{0:P0}}"/>
+                            </TextBlock>
+
+                            <TextBlock Foreground="#54717A"
+                                       FontSize="12">
+                                <Run Text="Keyword similarity: "/>
+                                <Run Text="{Binding KeywordScore, StringFormat={}{0:P0}}"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Background="#EFFAF8"
+                            CornerRadius="10"
+                            Padding="12"
+                            Margin="0,16,0,0">
+                        <TextBlock Foreground="#34545C"
+                                   FontSize="12"
+                                   TextWrapping="Wrap">
+                            <Run Text="Shared description keywords: "/>
+                            <Run Text="{Binding MatchedKeywords}"/>
+                        </TextBlock>
+                    </Border>
+
+                    <TextBlock Text="This is an automated suggestion, not confirmation of ownership."
+                               Foreground="#7B9398"
+                               FontSize="11"
+                               Margin="0,12,0,0"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <!-- DASHBOARD MATCH PREVIEW -->
+        <DataTemplate x:Key="DashboardMatchTemplate">
+            <Border Background="White"
+                    BorderBrush="#A7D9D4"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="13"
+                    Margin="0,0,0,10">
+                <StackPanel>
+                    <TextBlock Text="{Binding Classification, StringFormat={}{0} Match}"
+                               Foreground="#087C78"
+                               FontWeight="Bold"
+                               FontSize="12"/>
+
+                    <TextBlock Foreground="#102C35"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Margin="0,6,0,0"
+                               TextWrapping="Wrap">
+                        <Run Text="{Binding LostTitle}"/>
+                        <Run Text=" ↔ "/>
+                        <Run Text="{Binding FoundTitle}"/>
+                    </TextBlock>
+
+                    <TextBlock Text="{Binding MatchScore, StringFormat={}{0:F2}%}"
+                               Foreground="#087C78"
+                               FontWeight="Bold"
+                               FontSize="17"
+                               Margin="0,6,0,0"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+    </Window.Resources>
+
+    <!-- MAIN APPLICATION LAYOUT -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="290"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- LEFT SIDEBAR -->
+        <Border Grid.Column="0" Background="#087C78">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="130"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="160"/>
+                </Grid.RowDefinitions>
+
+                <!-- BRAND -->
+                <StackPanel Grid.Row="0"
+                            Orientation="Horizontal"
+                            Margin="22,28,10,0">
+                    <Border Width="55"
+                            Height="55"
+                            Background="#22B8B0"
+                            CornerRadius="14">
+                        <TextBlock Text="L"
+                                   Foreground="White"
+                                   FontFamily="Georgia"
+                                   FontSize="32"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                    </Border>
+
+                    <StackPanel Margin="13,4,0,0">
+                        <TextBlock Text="LostLink"
+                                   Foreground="White"
+                                   FontFamily="Georgia"
+                                   FontSize="27"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="CAMPUS MANAGEMENT"
+                                   Foreground="#C8ECE8"
+                                   FontSize="9"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- NAVIGATION -->
+                <StackPanel Grid.Row="1">
+                    <TextBlock Text="WORKSPACE"
+                               Foreground="#BCE5E1"
+                               FontSize="11"
+                               FontWeight="Bold"
+                               Margin="34,10,0,15"/>
+
+                    <Button x:Name="DashboardButton"
+                            Style="{StaticResource NavButtonStyle}"
+                            Background="#27A59F"
+                            Content="⌂   Dashboard"
+                            Click="DashboardButton_Click"/>
+
+                    <Button x:Name="LostItemsButton"
+                            Style="{StaticResource NavButtonStyle}"
+                            Content="○   Lost Items"
+                            Click="LostItemsButton_Click"/>
+
+                    <Button x:Name="FoundItemsButton"
+                            Style="{StaticResource NavButtonStyle}"
+                            Content="●   Found Items"
+                            Click="FoundItemsButton_Click"/>
+
+                    <Button x:Name="SmartMatchesButton"
+                            Style="{StaticResource NavButtonStyle}"
+                            Content="⌕   Smart Matches"
+                            Click="SmartMatchesButton_Click"/>
+
+                    <Button x:Name="ClaimsButton"
+                            Style="{StaticResource NavButtonStyle}"
+                            Content="✓   Claims"
+                            Click="ClaimsButton_Click"/>
+
+                    <Button x:Name="ActivityLogButton"
+                             Style="{StaticResource NavButtonStyle}"
+                             Content="☷   Activity Log"
+                             Click="ActivityLogButton_Click"/>
+                </StackPanel>
+
+                <!-- CURRENT USER -->
+                <Border Grid.Row="2"
+                        Background="#066E6A"
+                        CornerRadius="15"
+                        Margin="15,5,15,18"
+                        Padding="17">
+                    <StackPanel>
+                        <TextBlock x:Name="CurrentUserNameTextBlock"
+                                   Foreground="White"
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock x:Name="CurrentUserRoleTextBlock"
+                                   Foreground="#BCE5E1"
+                                   FontSize="12"
+                                   Margin="0,5,0,0"/>
+
+                        <Button x:Name="LogoutButton"
+                                Content="↪  Log out"
+                                Margin="0,17,0,0"
+                                Height="42"
+                                Background="Transparent"
+                                BorderBrush="#71D2CB"
+                                Foreground="White"
+                                FontWeight="SemiBold"
+                                Cursor="Hand"
+                                Click="LogoutButton_Click"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- RIGHT WORKSPACE -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="120"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- TOP HEADER -->
+            <Border Grid.Row="0"
+                    Background="#DDF4F1"
+                    BorderBrush="#C1E3DF"
+                    BorderThickness="0,0,0,1">
+                <Grid Margin="35,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="PageTitleTextBlock"
+                                   Text="Dashboard"
+                                   Foreground="#102C35"
+                                   FontFamily="Georgia"
+                                   FontSize="36"
+                                   FontWeight="Bold"/>
+
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,7,0,0">
+                            <TextBlock Text="Welcome back, "
+                                       Foreground="#54717A"
+                                       FontSize="14"/>
+                            <TextBlock x:Name="WelcomeUserTextBlock"
+                                       Foreground="#087C78"
+                                       FontSize="14"
+                                       FontWeight="Bold"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center">
+                        <Button x:Name="ReportLostItemButton"
+                                Style="{StaticResource ActionButtonStyle}"
+                                Background="White"
+                                Foreground="#087C78"
+                                Margin="0,0,12,0"
+                                Content="+ Report Lost Item"
+                                Click="ReportLostItemButton_Click"/>
+
+                        <Button x:Name="ReportFoundItemButton"
+                                Style="{StaticResource ActionButtonStyle}"
+                                Content="+ Report Found Item"
+                                Click="ReportFoundItemButton_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- DASHBOARD PAGE -->
+            <ScrollViewer x:Name="DashboardContent"
+                          Grid.Row="1"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="35,28,35,35">
+
+                    <TextBlock Text="Campus overview"
+                               Foreground="#102C35"
+                               FontSize="21"
+                               FontWeight="SemiBold"/>
+
+                    <TextBlock Text="Summary of LostLink reports, matches and claims."
+                               Foreground="#54717A"
+                               FontSize="12"
+                               Margin="0,5,0,25"/>
+
+                    <!-- SUMMARY CARDS -->
+                    <UniformGrid Columns="4">
+
+                        <Border Style="{StaticResource SummaryCardStyle}"
+                                Background="#FFF0E6">
+                            <StackPanel>
+                                <TextBlock Text="○"
+                                           Foreground="#E76F20"
+                                           FontSize="30"/>
+                                <TextBlock x:Name="LostReportsCountTextBlock"
+                                           Text="—"
+                                           Foreground="#102C35"
+                                           FontSize="32"
+                                           FontWeight="Bold"
+                                           Margin="0,12,0,0"/>
+                                <TextBlock Text="Lost Reports"
+                                           Foreground="#54717A"
+                                           FontSize="12"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource SummaryCardStyle}"
+                                Background="#D7F2EF">
+                            <StackPanel>
+                                <TextBlock Text="●"
+                                           Foreground="#119B94"
+                                           FontSize="25"/>
+                                <TextBlock x:Name="FoundReportsCountTextBlock"
+                                           Text="—"
+                                           Foreground="#102C35"
+                                           FontSize="32"
+                                           FontWeight="Bold"
+                                           Margin="0,17,0,0"/>
+                                <TextBlock Text="Found Reports"
+                                           Foreground="#54717A"
+                                           FontSize="12"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource SummaryCardStyle}"
+                                Background="#CDEEEA">
+                            <StackPanel>
+                                <TextBlock Text="⌕"
+                                           Foreground="#087C78"
+                                           FontSize="30"/>
+                                <TextBlock x:Name="PotentialMatchesCountTextBlock"
+                                           Text="—"
+                                           Foreground="#102C35"
+                                           FontSize="32"
+                                           FontWeight="Bold"
+                                           Margin="0,12,0,0"/>
+                                <TextBlock Text="Potential Matches"
+                                           Foreground="#54717A"
+                                           FontSize="12"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource SummaryCardStyle}"
+                                Background="#BFE9E4"
+                                Margin="0">
+                            <StackPanel>
+                                <TextBlock Text="✓"
+                                           Foreground="#087C78"
+                                           FontSize="30"/>
+                                <TextBlock x:Name="OpenClaimsCountTextBlock"
+                                           Text="—"
+                                           Foreground="#102C35"
+                                           FontSize="32"
+                                           FontWeight="Bold"
+                                           Margin="0,12,0,0"/>
+                                <TextBlock Text="Open Claims"
+                                           Foreground="#54717A"
+                                           FontSize="12"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <!-- RECENT REPORTS AND MATCHES -->
+                    <Grid Margin="0,25,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- RECENT REPORTS -->
+                        <Border Grid.Column="0"
+                                Background="White"
+                                BorderBrush="#B9DDD9"
+                                BorderThickness="1"
+                                CornerRadius="20"
+                                Padding="23">
+                            <StackPanel>
+                                <TextBlock Text="Recent Reports"
+                                           FontSize="19"
+                                           FontWeight="SemiBold"
+                                           Foreground="#102C35"/>
+
+                                <TextBlock Text="Recently saved lost and found reports"
+                                           Foreground="#668087"
+                                           FontSize="11"
+                                           Margin="0,5,0,18"/>
+
+                                <TextBlock x:Name="RecentReportsEmptyState"
+                                           Text="No reports to display yet"
+                                           Foreground="#54717A"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,35,0,35"/>
+
+                                <ItemsControl x:Name="RecentReportsItemsControl"
+                                              ItemTemplate="{StaticResource RecentItemCardTemplate}"
+                                              Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- MATCH PREVIEW -->
+                        <Border Grid.Column="2"
+                                Background="#C7EEEA"
+                                BorderBrush="#A7D9D4"
+                                BorderThickness="1"
+                                CornerRadius="20"
+                                Padding="23">
+                            <StackPanel>
+                                <TextBlock Text="⌕  Smart Matches"
+                                           FontSize="19"
+                                           FontWeight="SemiBold"
+                                           Foreground="#102C35"/>
+
+                                <TextBlock Text="Rule-based matching engine"
+                                           Foreground="#55767B"
+                                           FontSize="11"
+                                           Margin="0,6,0,20"/>
+
+                                <TextBlock x:Name="DashboardMatchesEmptyState"
+                                           Text="No match suggestions yet"
+                                           Foreground="#102C35"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Center"
+                                           TextWrapping="Wrap"
+                                           Margin="0,35,0,0"/>
+
+                                <ItemsControl x:Name="DashboardMatchesItemsControl"
+                                              ItemTemplate="{StaticResource DashboardMatchTemplate}"
+                                              Visibility="Collapsed"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- LOST ITEMS PAGE -->
+            <ScrollViewer x:Name="LostItemsContent"
+                          Grid.Row="1"
+                          Visibility="Collapsed"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="35,28,35,35">
+
+                    <Grid Margin="0,0,0,22">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <TextBlock Text="Reported Lost Items"
+                                       Foreground="#102C35"
+                                       FontSize="22"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="View lost-item reports saved in LostLink."
+                                       Foreground="#54717A"
+                                       FontSize="13"
+                                       Margin="0,6,0,0"/>
+                        </StackPanel>
+
+                        <Border Grid.Column="1"
+                                Background="#D7F2EF"
+                                CornerRadius="14"
+                                Padding="16,10"
+                                VerticalAlignment="Center">
+                            <TextBlock x:Name="LostItemsPageCountTextBlock"
+                                       Text="0 lost reports"
+                                       Foreground="#087C78"
+                                       FontWeight="SemiBold"/>
+                        </Border>
+                    </Grid>
+
+                    <TextBlock x:Name="LostItemsEmptyState"
+                               Text="No lost-item reports found."
+                               Foreground="#54717A"
+                               HorizontalAlignment="Center"
+                               Margin="0,70,0,0"/>
+
+                    <ItemsControl x:Name="LostItemsItemsControl"
+                                  ItemTemplate="{StaticResource LostItemCardTemplate}"
+                                  Visibility="Collapsed"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- FOUND ITEMS PAGE -->
+            <ScrollViewer x:Name="FoundItemsContent"
+                          Grid.Row="1"
+                          Visibility="Collapsed"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="35,28,35,35">
+
+                    <Grid Margin="0,0,0,22">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <TextBlock Text="Reported Found Items"
+                                       Foreground="#102C35"
+                                       FontSize="22"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="View found-item reports saved in LostLink."
+                                       Foreground="#54717A"
+                                       FontSize="13"
+                                       Margin="0,6,0,0"/>
+                        </StackPanel>
+
+                        <Border Grid.Column="1"
+                                Background="#D7F2EF"
+                                CornerRadius="14"
+                                Padding="16,10"
+                                VerticalAlignment="Center">
+                            <TextBlock x:Name="FoundItemsPageCountTextBlock"
+                                       Text="0 found reports"
+                                       Foreground="#087C78"
+                                       FontWeight="SemiBold"/>
+                        </Border>
+                    </Grid>
+
+                    <TextBlock x:Name="FoundItemsEmptyState"
+                               Text="No found-item reports found."
+                               Foreground="#54717A"
+                               HorizontalAlignment="Center"
+                               Margin="0,70,0,0"/>
+
+                    <ItemsControl x:Name="FoundItemsItemsControl"
+                                  ItemTemplate="{StaticResource FoundItemCardTemplate}"
+                                  Visibility="Collapsed"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- SMART MATCHES PAGE -->
+            <ScrollViewer x:Name="SmartMatchesContent"
+                          Grid.Row="1"
+                          Visibility="Collapsed"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="35,28,35,35">
+
+                    <Grid Margin="0,0,0,22">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <TextBlock Text="Smart Item Matching"
+                                       Foreground="#102C35"
+                                       FontSize="22"
+                                       FontWeight="SemiBold"/>
+
+                            <TextBlock Text="Potential lost-and-found matches calculated using category, colour, location, date and description."
+                                       Foreground="#54717A"
+                                       FontSize="13"
+                                       TextWrapping="Wrap"
+                                       Margin="0,6,0,0"/>
+                        </StackPanel>
+
+                        <Border Grid.Column="1"
+                                Background="#D7F2EF"
+                                CornerRadius="14"
+                                Padding="16,10"
+                                VerticalAlignment="Center"
+                                Margin="15,0,0,0">
+                            <TextBlock x:Name="SmartMatchesPageCountTextBlock"
+                                       Text="0 potential matches"
+                                       Foreground="#087C78"
+                                       FontWeight="SemiBold"/>
+                        </Border>
+                    </Grid>
+
+                    <Border Background="#DDF4F1"
+                            BorderBrush="#B9DDD9"
+                            BorderThickness="1"
+                            CornerRadius="13"
+                            Padding="17"
+                            Margin="0,0,0,20">
+                        <StackPanel>
+                            <TextBlock Text="How matching works"
+                                       Foreground="#102C35"
+                                       FontWeight="Bold"
+                                       FontSize="14"/>
+
+                            <TextBlock Text="Category 30%  •  Colour 20%  •  Location 20%  •  Date 15%  •  Description keywords 15%"
+                                       Foreground="#34545C"
+                                       FontSize="12"
+                                       TextWrapping="Wrap"
+                                       Margin="0,8,0,0"/>
+
+                            <TextBlock Text="Strong: 75–100%    |    Possible: 45–74.99%    |    Low: below 45% (not displayed)"
+                                       Foreground="#54717A"
+                                       FontSize="12"
+                                       TextWrapping="Wrap"
+                                       Margin="0,7,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock x:Name="SmartMatchesEmptyState"
+                               Text="No strong or possible matches found yet. Add lost and found reports to generate suggestions."
+                               Foreground="#54717A"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Margin="0,70,0,0"/>
+
+                    <ItemsControl x:Name="SmartMatchesItemsControl"
+                                  ItemTemplate="{StaticResource SmartMatchCardTemplate}"
+                                  Visibility="Collapsed"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- CLAIMS MANAGEMENT PAGE -->
+            <ScrollViewer x:Name="ClaimsContent"
+                          Grid.Row="1"
+                          Visibility="Collapsed"
+                          VerticalScrollBarVisibility="Auto">
+
+                <StackPanel Margin="35,28,35,35">
+
+                    <Grid Margin="0,0,0,22">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <TextBlock Text="Claims Management"
+                                       Foreground="#102C35"
+                                       FontSize="22"
+                                       FontWeight="SemiBold"/>
+
+                            <TextBlock Text="Review student ownership claims and record item collection."
+                                       Foreground="#54717A"
+                                       FontSize="13"
+                                       Margin="0,6,0,0"/>
+                        </StackPanel>
+
+                        <Border Grid.Column="1"
+                                Background="#D7F2EF"
+                                CornerRadius="14"
+                                Padding="16,10"
+                                VerticalAlignment="Center">
+                            <TextBlock x:Name="ClaimsPageCountTextBlock"
+                                       Text="0 claims"
+                                       Foreground="#087C78"
+                                       FontWeight="SemiBold"/>
+                        </Border>
+                    </Grid>
+
+                    <!-- LIVE CLAIMS OVERVIEW -->
+                    <Border Background="#DDF4F1"
+                            BorderBrush="#B9DDD9"
+                            BorderThickness="1"
+                            CornerRadius="15"
+                            Padding="20"
+                            Margin="0,0,0,22">
+                        <StackPanel>
+                            <TextBlock Text="Claims Overview"
+                                       Foreground="#102C35"
+                                       FontSize="17"
+                                       FontWeight="SemiBold"/>
+
+                            <TextBlock Text="Track claims awaiting review, approved handovers and completed collections."
+                                       Foreground="#54717A"
+                                       FontSize="12"
+                                       TextWrapping="Wrap"
+                                       Margin="0,5,0,17"/>
+
+                            <UniformGrid Columns="3">
+                                <!-- PENDING -->
+                                <Border Background="White"
+                                        BorderBrush="#C5E4E0"
+                                        BorderThickness="1"
+                                        CornerRadius="12"
+                                        Padding="16"
+                                        Margin="0,0,10,0">
+                                    <StackPanel>
+                                        <TextBlock Text="Pending"
+                                                   Foreground="#A75B24"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"/>
+                                        <TextBlock x:Name="PendingClaimsOverviewCountTextBlock"
+                                                   Text="0"
+                                                   Foreground="#102C35"
+                                                   FontSize="29"
+                                                   FontWeight="Bold"
+                                                   Margin="0,7,0,0"/>
+                                        <TextBlock Text="Awaiting review"
+                                                   Foreground="#54717A"
+                                                   FontSize="11"
+                                                   TextWrapping="Wrap"
+                                                   Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- APPROVED -->
+                                <Border Background="White"
+                                        BorderBrush="#C5E4E0"
+                                        BorderThickness="1"
+                                        CornerRadius="12"
+                                        Padding="16"
+                                        Margin="0,0,10,0">
+                                    <StackPanel>
+                                        <TextBlock Text="Approved"
+                                                   Foreground="#087C78"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"/>
+                                        <TextBlock x:Name="ApprovedClaimsOverviewCountTextBlock"
+                                                   Text="0"
+                                                   Foreground="#102C35"
+                                                   FontSize="29"
+                                                   FontWeight="Bold"
+                                                   Margin="0,7,0,0"/>
+                                        <TextBlock Text="Awaiting collection"
+                                                   Foreground="#54717A"
+                                                   FontSize="11"
+                                                   TextWrapping="Wrap"
+                                                   Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- COLLECTED -->
+                                <Border Background="White"
+                                        BorderBrush="#C5E4E0"
+                                        BorderThickness="1"
+                                        CornerRadius="12"
+                                        Padding="16">
+                                    <StackPanel>
+                                        <TextBlock Text="Collected"
+                                                   Foreground="#087C78"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"/>
+                                        <TextBlock x:Name="CollectedClaimsOverviewCountTextBlock"
+                                                   Text="0"
+                                                   Foreground="#102C35"
+                                                   FontSize="29"
+                                                   FontWeight="Bold"
+                                                   Margin="0,7,0,0"/>
+                                        <TextBlock Text="Handovers complete"
+                                                   Foreground="#54717A"
+                                                   FontSize="11"
+                                                   TextWrapping="Wrap"
+                                                   Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- EMPTY STATE -->
+                    <TextBlock x:Name="ClaimsEmptyState"
+                               Text="No claims have been submitted yet. Open a found item and select Submit Claim."
+                               Foreground="#54717A"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Margin="0,70,0,0"/>
+
+                    <!-- CLAIM RECORDS -->
+                    <ItemsControl x:Name="ClaimsItemsControl"
+                                  Visibility="Collapsed">
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="White"
+                                        BorderBrush="#C5E4E0"
+                                        BorderThickness="1"
+                                        CornerRadius="16"
+                                        Padding="22"
+                                        Margin="0,0,0,15">
+
+                                    <StackPanel>
+
+                                        <!-- CLAIM HEADER -->
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding ClaimTitle}"
+                                                           FontSize="19"
+                                                           FontWeight="Bold"
+                                                           Foreground="#102C35"
+                                                           TextWrapping="Wrap"/>
+
+                                                <TextBlock Text="{Binding FoundItemTitle}"
+                                                           FontSize="13"
+                                                           Foreground="#54717A"
+                                                           Margin="0,7,0,0"
+                                                           TextWrapping="Wrap"/>
+                                            </StackPanel>
+
+                                            <Border Grid.Column="1"
+                                                    Background="#D7F2EF"
+                                                    CornerRadius="12"
+                                                    Padding="13,8"
+                                                    VerticalAlignment="Top"
+                                                    Margin="15,0,0,0">
+                                                <TextBlock Text="{Binding Status}"
+                                                           Foreground="#087C78"
+                                                           FontSize="12"
+                                                           FontWeight="Bold"/>
+                                            </Border>
+                                        </Grid>
+
+                                        <!-- CLAIM DETAILS -->
+                                        <TextBlock Margin="0,16,0,0"
+                                                   Foreground="#34545C"
+                                                   FontSize="13">
+                                            <Run Text="Student: "/>
+                                            <Run Text="{Binding ClaimantName}"/>
+                                        </TextBlock>
+
+                                        <TextBlock Margin="0,7,0,0"
+                                                   Foreground="#54717A"
+                                                   FontSize="12">
+                                            <Run Text="Submitted by: "/>
+                                            <Run Text="{Binding SubmittedByName}"/>
+                                        </TextBlock>
+
+                                        <TextBlock Margin="0,7,0,0"
+                                                   Foreground="#54717A"
+                                                   FontSize="12">
+                                            <Run Text="Created: "/>
+                                            <Run Text="{Binding CreatedAt, StringFormat={}{0:dd MMM yyyy HH:mm}}"/>
+                                        </TextBlock>
+
+                                        <TextBlock Margin="0,7,0,0"
+                                                   Foreground="#54717A"
+                                                   FontSize="12">
+                                            <Run Text="Linked lost report: "/>
+                                            <Run Text="{Binding LostReportText}"/>
+                                        </TextBlock>
+
+                                        <!-- VERIFICATION NOTES -->
+                                        <Border Background="#EFFAF8"
+                                                CornerRadius="11"
+                                                Padding="15"
+                                                Margin="0,17,0,15">
+                                            <StackPanel>
+                                                <TextBlock Text="Ownership Verification"
+                                                           Foreground="#102C35"
+                                                           FontWeight="SemiBold"
+                                                           FontSize="13"/>
+
+                                                <TextBlock Text="{Binding VerificationNotes}"
+                                                           Foreground="#34545C"
+                                                           FontSize="13"
+                                                           TextWrapping="Wrap"
+                                                           Margin="0,9,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <TextBlock Text="{Binding ProcessedByText}"
+                                                   Foreground="#668486"
+                                                   FontSize="12"
+                                                   Margin="0,0,0,12"/>
+
+                                        <!-- CLAIM ACTIONS -->
+                                        <StackPanel Orientation="Horizontal">
+
+                                            <Button Content="Approve"
+                                                    Tag="{Binding}"
+                                                    Width="105"
+                                                    Height="38"
+                                                    Margin="0,0,10,0"
+                                                    Background="#19AAA3"
+                                                    Foreground="White"
+                                                    BorderThickness="0"
+                                                    FontWeight="SemiBold"
+                                                    Cursor="Hand"
+                                                    Visibility="{Binding ApprovalButtonsVisibility}"
+                                                    Click="ApproveClaimButton_Click"/>
+
+                                            <Button Content="Reject"
+                                                    Tag="{Binding}"
+                                                    Width="105"
+                                                    Height="38"
+                                                    Margin="0,0,10,0"
+                                                    Background="#B45A20"
+                                                    Foreground="White"
+                                                    BorderThickness="0"
+                                                    FontWeight="SemiBold"
+                                                    Cursor="Hand"
+                                                    Visibility="{Binding ApprovalButtonsVisibility}"
+                                                    Click="RejectClaimButton_Click"/>
+
+                                            <Button Content="Mark as Collected"
+                                                    Tag="{Binding}"
+                                                    Width="165"
+                                                    Height="38"
+                                                    Background="#087C78"
+                                                    Foreground="White"
+                                                    BorderThickness="0"
+                                                    FontWeight="SemiBold"
+                                                    Cursor="Hand"
+                                                    Visibility="{Binding CollectionButtonVisibility}"
+                                                    Click="CollectClaimButton_Click"/>
+
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+            </ScrollViewer>
+
+
+            <!-- ACTIVITY LOG PAGE: READ-ONLY AUDIT HISTORY -->
+            <ScrollViewer x:Name="ActivityLogContent"
+                          Grid.Row="1"
+                          Visibility="Collapsed"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="35,28,35,35">
+                    <TextBlock Text="System Activity History"
+                               FontSize="22"
+                               FontWeight="SemiBold"
+                               Foreground="#102C35"/>
+                    <TextBlock Text="Review recorded lost and found reports, claim decisions and collections."
+                               Margin="0,6,0,20"
+                               FontSize="12"
+                               Foreground="#54717A"/>
+
+                    <Border Background="#D7F2EF"
+                            BorderBrush="#A7D9D4"
+                            BorderThickness="1"
+                            CornerRadius="16"
+                            Padding="20"
+                            Margin="0,0,0,18">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="Activity Overview"
+                                           FontWeight="SemiBold"
+                                           FontSize="17"
+                                           Foreground="#102C35"/>
+                                <TextBlock x:Name="ActivityLogCountTextBlock"
+                                           Text="0 recorded activities"
+                                           Margin="0,6,0,0"
+                                           Foreground="#087C78"
+                                           FontWeight="SemiBold"/>
+                            </StackPanel>
+                            <Button Grid.Column="1"
+                                    Content="↻  Refresh"
+                                    Style="{StaticResource ActionButtonStyle}"
+                                    Click="RefreshActivityLogButton_Click"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Background="White"
+                            BorderBrush="#C5E4E0"
+                            BorderThickness="1"
+                            CornerRadius="14"
+                            Padding="16"
+                            Margin="0,0,0,18">
+                        <StackPanel>
+                            <TextBlock Text="Search activity"
+                                       Foreground="#102C35"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,8"/>
+                            <TextBox x:Name="ActivityLogSearchTextBox"
+                                     Height="38"
+                                     Padding="10,7"
+                                     FontSize="13"
+                                     VerticalContentAlignment="Center"
+                                     TextChanged="ActivityLogSearchTextBox_TextChanged"
+                                     ToolTip="Search by action, details, user, or role"/>
+                            <TextBlock Text="Filter by action, details, staff name, or role."
+                                       Margin="0,7,0,0"
+                                       FontSize="11"
+                                       Foreground="#668486"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock x:Name="ActivityLogEmptyState"
+                               Text="No activities have been recorded yet."
+                               Margin="0,32,0,0"
+                               HorizontalAlignment="Center"
+                               Foreground="#54717A"
+                               FontSize="14"/>
+
+                    <ItemsControl x:Name="ActivityLogItemsControl"
+                                  Visibility="Collapsed">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="White"
+                                        BorderBrush="#C5E4E0"
+                                        BorderThickness="1"
+                                        CornerRadius="15"
+                                        Padding="19"
+                                        Margin="0,0,0,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="{Binding Action}"
+                                                       FontSize="17"
+                                                       FontWeight="Bold"
+                                                       Foreground="#087C78"/>
+                                            <TextBlock Text="{Binding Details}"
+                                                       Margin="0,8,15,0"
+                                                       FontSize="13"
+                                                       TextWrapping="Wrap"
+                                                       Foreground="#34545C"/>
+                                            <StackPanel Orientation="Horizontal"
+                                                        Margin="0,12,0,0">
+                                                <TextBlock Text="Performed by: "
+                                                           Foreground="#668486"
+                                                           FontSize="12"/>
+                                                <TextBlock Text="{Binding PerformedBy}"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#102C35"
+                                                           FontSize="12"/>
+                                                <TextBlock Text="  •  "
+                                                           Foreground="#668486"/>
+                                                <TextBlock Text="{Binding UserRole}"
+                                                           Foreground="#54717A"
+                                                           FontSize="12"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1"
+                                                    HorizontalAlignment="Right">
+                                            <TextBlock Text="{Binding CreatedAt, StringFormat={}{0:dd MMM yyyy}}"
+                                                       Foreground="#102C35"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Right"/>
+                                            <TextBlock Text="{Binding CreatedAt, StringFormat={}{0:hh:mm tt}}"
+                                                       Foreground="#54717A"
+                                                       FontSize="12"
+                                                       Margin="0,5,0,0"
+                                                       HorizontalAlignment="Right"/>
+                                            <TextBlock Text="{Binding LogId, StringFormat=Log #{0}}"
+                                                       Foreground="#7B9398"
+                                                       FontSize="11"
+                                                       Margin="0,10,0,0"
+                                                       HorizontalAlignment="Right"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Window>

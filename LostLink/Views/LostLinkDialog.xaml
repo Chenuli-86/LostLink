@@ -1,0 +1,142 @@
+﻿<Window x:Class="LostLink.Views.LostLinkDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="LostLink"
+        Width="460"
+        SizeToContent="Height"
+        MinHeight="250"
+        MaxHeight="600"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Background="Transparent"
+        AllowsTransparency="True"
+        FontFamily="Segoe UI">
+
+    <Border Background="White"
+            CornerRadius="22"
+            BorderBrush="#B9DDD9"
+            BorderThickness="1"
+            Padding="28">
+
+        <Border.Effect>
+            <DropShadowEffect Color="#123B3A"
+                              BlurRadius="22"
+                              ShadowDepth="5"
+                              Opacity="0.18"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="54"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="30"/>
+                </Grid.ColumnDefinitions>
+
+                <Border x:Name="IconBackground"
+                        Grid.Column="0"
+                        Width="48"
+                        Height="48"
+                        Background="#D7F2EF"
+                        CornerRadius="14">
+
+                    <TextBlock x:Name="DialogIcon"
+                               Text="✓"
+                               Foreground="#087C78"
+                               FontSize="25"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                </Border>
+
+                <StackPanel Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Margin="14,0,0,0">
+
+                    <TextBlock Text="LOSTLINK"
+                               Foreground="#087C78"
+                               FontSize="10"
+                               FontWeight="Bold"/>
+
+                    <TextBlock x:Name="DialogTitleTextBlock"
+                               Text="Notification"
+                               Foreground="#102C35"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               TextWrapping="Wrap"
+                               Margin="0,4,0,0"/>
+                </StackPanel>
+
+                <Button Grid.Column="2"
+                        Content="×"
+                        Width="28"
+                        Height="28"
+                        FontSize="22"
+                        Background="Transparent"
+                        Foreground="#789093"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        VerticalAlignment="Top"
+                        Click="CloseButton_Click"/>
+            </Grid>
+
+            <Border Grid.Row="1"
+                    Height="1"
+                    Background="#E4F0EE"
+                    Margin="0,22,0,20"/>
+
+            <ScrollViewer Grid.Row="2"
+                          MaxHeight="260"
+                          VerticalScrollBarVisibility="Auto">
+
+                <TextBlock x:Name="DialogMessageTextBlock"
+                           Text="Your message appears here."
+                           Foreground="#45636A"
+                           FontSize="14"
+                           LineHeight="23"
+                           TextWrapping="Wrap"/>
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="3"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0,26,0,0">
+
+                <Button x:Name="CancelButton"
+                        Content="Cancel"
+                        Width="110"
+                        Height="43"
+                        Margin="0,0,10,0"
+                        Background="#EFF8F7"
+                        Foreground="#087C78"
+                        BorderBrush="#B9DDD9"
+                        BorderThickness="1"
+                        FontWeight="SemiBold"
+                        Cursor="Hand"
+                        Visibility="Collapsed"
+                        Click="CancelButton_Click"/>
+
+                <Button x:Name="ConfirmButton"
+                        Content="OK"
+                        Width="115"
+                        Height="43"
+                        Background="#19AAA3"
+                        Foreground="White"
+                        BorderThickness="0"
+                        FontWeight="SemiBold"
+                        Cursor="Hand"
+                        IsDefault="True"
+                        Click="ConfirmButton_Click"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

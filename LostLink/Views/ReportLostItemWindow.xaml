@@ -1,0 +1,594 @@
+﻿<Window x:Class="LostLink.Views.ReportLostItemWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="LostLink - Report Lost Item"
+        Width="1180"
+        Height="820"
+        MinWidth="1050"
+        MinHeight="720"
+        WindowStartupLocation="CenterOwner"
+        Background="#EAF7F5"
+        FontFamily="Segoe UI"
+        ResizeMode="CanResize">
+
+    <Window.Resources>
+
+        <!-- Standard form text field -->
+        <Style x:Key="FormTextBoxStyle"
+               TargetType="TextBox">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#17383B"/>
+            <Setter Property="Background" Value="#F9FCFC"/>
+            <Setter Property="BorderBrush" Value="#B9DDDA"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"/>
+        </Style>
+
+        <!-- Form labels -->
+        <Style x:Key="FormLabelStyle"
+               TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#294D50"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+
+        <!-- Category selector -->
+        <Style x:Key="FormComboBoxStyle"
+               TargetType="ComboBox">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="9,4"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#17383B"/>
+            <Setter Property="Background" Value="#F9FCFC"/>
+            <Setter Property="BorderBrush" Value="#B9DDDA"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0"
+                                 EndPoint="1,1">
+                <GradientStop Color="#F3FBFA"
+                              Offset="0"/>
+                <GradientStop Color="#DDF3F0"
+                              Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="86"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- HEADER -->
+        <Border Grid.Row="0"
+                Background="#D6F0ED"
+                BorderBrush="#B8DEDA"
+                BorderThickness="0,0,0,1">
+
+            <Grid Margin="38,0">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- LostLink brand -->
+                <StackPanel Orientation="Horizontal"
+                            VerticalAlignment="Center">
+
+                    <Border Width="42"
+                            Height="42"
+                            CornerRadius="12"
+                            Background="#20ADA6"
+                            Margin="0,0,13,0">
+
+                        <TextBlock Text="L"
+                                   FontFamily="Georgia"
+                                   FontSize="26"
+                                   FontWeight="Bold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+
+                    </Border>
+
+                    <StackPanel VerticalAlignment="Center">
+
+                        <TextBlock FontFamily="Georgia"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#102F32">
+
+                            <Run Text="Lost"/>
+                            <Run Text="Link"
+                                 Foreground="#18A7A0"/>
+
+                        </TextBlock>
+
+                        <TextBlock Text="CAMPUS MANAGEMENT"
+                                   FontSize="9"
+                                   FontWeight="SemiBold"
+                                   Foreground="#538184"/>
+
+                    </StackPanel>
+
+                </StackPanel>
+
+                <!-- Return to dashboard -->
+                <Button Grid.Column="1"
+                        x:Name="CancelTopButton"
+                        Content="←  Back to Dashboard"
+                        Height="40"
+                        Padding="18,0"
+                        Background="White"
+                        Foreground="#087F7B"
+                        BorderBrush="#A9D8D4"
+                        BorderThickness="1"
+                        FontWeight="SemiBold"
+                        Cursor="Hand"
+                        VerticalAlignment="Center"
+                        Click="CancelButton_Click"/>
+
+            </Grid>
+
+        </Border>
+
+        <!-- MAIN CONTENT -->
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+
+            <Grid Margin="42,28,42,30">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="28"/>
+                    <ColumnDefinition Width="320"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- LEFT: REPORT FORM -->
+                <StackPanel Grid.Column="0">
+
+                    <!-- Form heading -->
+                    <Border Background="#FFF0E7"
+                            CornerRadius="16"
+                            BorderBrush="#F4C9AC"
+                            BorderThickness="1"
+                            Padding="18,12"
+                            Margin="0,0,0,18">
+
+                        <StackPanel Orientation="Horizontal">
+
+                            <Border Width="40"
+                                    Height="40"
+                                    CornerRadius="11"
+                                    Background="#FFE0CC"
+                                    Margin="0,0,13,0">
+
+                                <TextBlock Text="○"
+                                           FontSize="26"
+                                           Foreground="#F17B32"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+
+                            </Border>
+
+                            <StackPanel VerticalAlignment="Center">
+
+                                <TextBlock Text="Report a Lost Item"
+                                           FontFamily="Georgia"
+                                           FontWeight="Bold"
+                                           FontSize="24"
+                                           Foreground="#123438"/>
+
+                                <TextBlock Text="Record the details of an item reported as lost."
+                                           FontSize="12"
+                                           Foreground="#668486"
+                                           Margin="0,3,0,0"/>
+
+                            </StackPanel>
+
+                        </StackPanel>
+
+                    </Border>
+
+                    <!-- Item name and category -->
+                    <Grid Margin="0,0,0,14">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.4*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+
+                            <TextBlock Text="Item name *"
+                                       Style="{StaticResource FormLabelStyle}"/>
+
+                            <TextBox x:Name="ItemNameTextBox"
+                                     Style="{StaticResource FormTextBoxStyle}"/>
+
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+
+                            <TextBlock Text="Category *"
+                                       Style="{StaticResource FormLabelStyle}"/>
+
+                            <ComboBox x:Name="CategoryComboBox"
+                                      Style="{StaticResource FormComboBoxStyle}">
+
+                                <ComboBoxItem Content="Electronics"/>
+                                <ComboBoxItem Content="Identification"/>
+                                <ComboBoxItem Content="Keys"/>
+                                <ComboBoxItem Content="Bag"/>
+                                <ComboBoxItem Content="Clothing"/>
+                                <ComboBoxItem Content="Books / Stationery"/>
+                                <ComboBoxItem Content="Accessories"/>
+                                <ComboBoxItem Content="Other"/>
+
+                            </ComboBox>
+
+                        </StackPanel>
+
+                    </Grid>
+
+                    <!-- Colour and location -->
+                    <Grid Margin="0,0,0,14">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="1.4*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+
+                            <TextBlock Text="Colour *"
+                                       Style="{StaticResource FormLabelStyle}"/>
+
+                            <TextBox x:Name="ColourTextBox"
+                                     Style="{StaticResource FormTextBoxStyle}"/>
+
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+
+                            <TextBlock Text="Last seen location *"
+                                       Style="{StaticResource FormLabelStyle}"/>
+
+                            <TextBox x:Name="LocationTextBox"
+                                     Style="{StaticResource FormTextBoxStyle}"/>
+
+                        </StackPanel>
+
+                    </Grid>
+
+                    <!-- Date and approximate time -->
+                    <Grid Margin="0,0,0,14">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+
+                            <TextBlock Text="Date lost *"
+                                       Style="{StaticResource FormLabelStyle}"/>
+
+                            <DatePicker x:Name="DateLostPicker"
+                                        Height="42"
+                                        FontSize="13"/>
+
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+
+                            <TextBlock Text="Approximate time"
+                                       Style="{StaticResource FormLabelStyle}"/>
+
+                            <TextBox x:Name="TimeLostTextBox"
+                                     Style="{StaticResource FormTextBoxStyle}"
+                                     ToolTip="Example: 2:30 PM"/>
+
+                        </StackPanel>
+
+                    </Grid>
+
+                    <!-- Description -->
+                    <TextBlock Text="Description *"
+                               Style="{StaticResource FormLabelStyle}"/>
+
+                    <TextBox x:Name="DescriptionTextBox"
+                             Height="88"
+                             Padding="12,10"
+                             FontSize="13"
+                             Foreground="#17383B"
+                             Background="#F9FCFC"
+                             BorderBrush="#B9DDDA"
+                             BorderThickness="1.5"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             VerticalScrollBarVisibility="Auto"
+                             Margin="0,0,0,14"/>
+
+                    <!-- Identifying details -->
+                    <TextBlock Text="Identifying details"
+                               Style="{StaticResource FormLabelStyle}"/>
+
+                    <TextBox x:Name="IdentifyingDetailsTextBox"
+                             Height="70"
+                             Padding="12,10"
+                             FontSize="13"
+                             Foreground="#17383B"
+                             Background="#F9FCFC"
+                             BorderBrush="#B9DDDA"
+                             BorderThickness="1.5"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             VerticalScrollBarVisibility="Auto"/>
+
+                    <!-- PHOTO UPLOAD SECTION -->
+                    <Border Background="White"
+                            BorderBrush="#B9DDDA"
+                            BorderThickness="1"
+                            CornerRadius="14"
+                            Padding="16"
+                            Margin="0,18,0,0">
+
+                        <StackPanel>
+
+                            <TextBlock Text="Item photo (optional)"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#294D50"
+                                       Margin="0,0,0,5"/>
+
+                            <TextBlock Text="Upload a clear photo to help identify your lost item."
+                                       FontSize="12"
+                                       Foreground="#668486"
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,12"/>
+
+                            <!-- Photo preview -->
+                            <Border Height="170"
+                                    Background="#F3FBFA"
+                                    BorderBrush="#B9DDDA"
+                                    BorderThickness="1"
+                                    CornerRadius="10"
+                                    Margin="0,0,0,12">
+
+                                <Grid>
+
+                                    <StackPanel x:Name="PhotoPlaceholderPanel"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
+
+                                        <TextBlock Text="📷"
+                                                   FontSize="32"
+                                                   HorizontalAlignment="Center"/>
+
+                                        <TextBlock Text="No photo selected"
+                                                   Foreground="#668486"
+                                                   FontSize="12"
+                                                   HorizontalAlignment="Center"
+                                                   Margin="0,8,0,0"/>
+
+                                    </StackPanel>
+
+                                    <Image x:Name="ItemPhotoPreview"
+                                           Stretch="Uniform"
+                                           Margin="8"
+                                           Visibility="Collapsed"/>
+
+                                </Grid>
+
+                            </Border>
+
+                            <TextBlock x:Name="SelectedPhotoTextBlock"
+                                       Text="JPG, JPEG or PNG - Maximum 5 MB"
+                                       FontSize="11"
+                                       Foreground="#668486"
+                                       TextTrimming="CharacterEllipsis"
+                                       Margin="0,0,0,12"/>
+
+                            <!-- Upload and remove buttons -->
+                            <Grid>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Button Grid.Column="0"
+                                        Content="Upload Photo"
+                                        Height="40"
+                                        Background="#18AAA3"
+                                        Foreground="White"
+                                        BorderThickness="0"
+                                        FontWeight="SemiBold"
+                                        Cursor="Hand"
+                                        Click="UploadPhotoButton_Click"/>
+
+                                <Button x:Name="RemovePhotoButton"
+                                        Grid.Column="2"
+                                        Content="Remove Photo"
+                                        Height="40"
+                                        Background="White"
+                                        Foreground="#087F7B"
+                                        BorderBrush="#9FD3CF"
+                                        BorderThickness="1"
+                                        FontWeight="SemiBold"
+                                        Cursor="Hand"
+                                        IsEnabled="False"
+                                        Click="RemovePhotoButton_Click"/>
+
+                            </Grid>
+
+                        </StackPanel>
+
+                    </Border>
+
+                </StackPanel>
+
+                <!-- RIGHT: INFORMATION AND SUBMISSION -->
+                <StackPanel Grid.Column="2">
+
+                    <!-- Matching information -->
+                    <Border Background="#C8EEEA"
+                            CornerRadius="18"
+                            Padding="22"
+                            Margin="0,0,0,16">
+
+                        <StackPanel>
+
+                            <Border Width="45"
+                                    Height="45"
+                                    CornerRadius="13"
+                                    Background="#A9E3DE"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,0,0,13">
+
+                                <TextBlock Text="⌕"
+                                           FontSize="26"
+                                           Foreground="#087F7B"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+
+                            </Border>
+
+                            <TextBlock Text="Help us find the right match"
+                                       FontFamily="Georgia"
+                                       FontSize="20"
+                                       FontWeight="Bold"
+                                       Foreground="#123438"
+                                       TextWrapping="Wrap"/>
+
+                            <TextBlock Text="Accurate details improve LostLink's rule-based matching results."
+                                       FontSize="12"
+                                       Foreground="#4D7779"
+                                       TextWrapping="Wrap"
+                                       LineHeight="18"
+                                       Margin="0,7,0,13"/>
+
+                            <Separator Background="#A6D9D5"
+                                       Margin="0,0,0,13"/>
+
+                            <TextBlock Text="MATCHING USES"
+                                       FontSize="10"
+                                       FontWeight="Bold"
+                                       Foreground="#087F7B"
+                                       Margin="0,0,0,10"/>
+
+                            <TextBlock Text="✓  Category"
+                                       FontSize="12"
+                                       Foreground="#315D60"
+                                       Margin="0,0,0,8"/>
+
+                            <TextBlock Text="✓  Colour"
+                                       FontSize="12"
+                                       Foreground="#315D60"
+                                       Margin="0,0,0,8"/>
+
+                            <TextBlock Text="✓  Location"
+                                       FontSize="12"
+                                       Foreground="#315D60"
+                                       Margin="0,0,0,8"/>
+
+                            <TextBlock Text="✓  Date"
+                                       FontSize="12"
+                                       Foreground="#315D60"
+                                       Margin="0,0,0,8"/>
+
+                            <TextBlock Text="✓  Description keywords"
+                                       FontSize="12"
+                                       Foreground="#315D60"/>
+
+                        </StackPanel>
+
+                    </Border>
+
+                    <!-- Submit panel -->
+                    <Border Background="White"
+                            CornerRadius="18"
+                            BorderBrush="#C3E2DF"
+                            BorderThickness="1"
+                            Padding="21">
+
+                        <StackPanel>
+
+                            <TextBlock Text="Ready to submit?"
+                                       FontSize="16"
+                                       FontWeight="Bold"
+                                       Foreground="#15383B"/>
+
+                            <TextBlock Text="Fields marked with * are required."
+                                       FontSize="11"
+                                       Foreground="#6A888A"
+                                       Margin="0,4,0,14"/>
+
+                            <!-- Validation errors -->
+                            <Border x:Name="ErrorBorder"
+                                    Background="#FFF0E7"
+                                    BorderBrush="#F4C9AC"
+                                    BorderThickness="1"
+                                    CornerRadius="9"
+                                    Padding="10"
+                                    Visibility="Collapsed"
+                                    Margin="0,0,0,12">
+
+                                <TextBlock x:Name="ErrorTextBlock"
+                                           Foreground="#B65325"
+                                           FontSize="11"
+                                           TextWrapping="Wrap"/>
+
+                            </Border>
+
+                            <Button x:Name="SaveLostItemButton"
+                                    Content="Save Lost Report"
+                                    Height="48"
+                                    Background="#18AAA3"
+                                    Foreground="White"
+                                    BorderThickness="0"
+                                    FontSize="13"
+                                    FontWeight="SemiBold"
+                                    Cursor="Hand"
+                                    Click="SaveLostItemButton_Click"
+                                    Margin="0,0,0,9"/>
+
+                            <Button Content="Cancel"
+                                    Height="42"
+                                    Background="White"
+                                    Foreground="#087F7B"
+                                    BorderBrush="#9FD3CF"
+                                    BorderThickness="1"
+                                    FontSize="13"
+                                    FontWeight="SemiBold"
+                                    Cursor="Hand"
+                                    Click="CancelButton_Click"/>
+
+                        </StackPanel>
+
+                    </Border>
+
+                </StackPanel>
+
+            </Grid>
+
+        </ScrollViewer>
+
+    </Grid>
+
+</Window>
